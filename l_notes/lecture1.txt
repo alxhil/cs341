@@ -1,0 +1,67 @@
+	September 30th 2019
+	Alex Hill
+	CS 341
+
+
+	movl %esi, (%rdi,%rax,4) moves from register to memory location(%rdi)
+	moq 24(%rdi,) from memory to array
+
+
+	Practice Problem 3.41
+	A) Offsets size of field
+	p 0	   8
+	s.x 8	   4
+	s.y 12	   4
+	next 16	   8
+
+	24 Total bytes needed for structure
+
+	B)
+
+	C)
+	movl 12(%rdi), %eax		int x = eax
+	movl %eax, 8(%rdi)		
+	leaq 8(%rdi), %rax		Grabs address of x and places in rax
+	movq %rax,(%rdi)	       grabs address and places it in p sp->p
+	movq %rdi,16(%rdi)	       spC -> next = sp rdi changes memory 	
+	ret				return;
+
+	for the double since it occupies a byte it has to be a multiple of 8
+
+	calculate what is the k that the whole structure hsa to have
+	the largest k in all of its fields
+
+	primitive data type require k bytes
+
+	after c add 3 bytes of nothing so p+4 can be added in
+
+	24 is a multiple of 8
+
+
+	i[0] starts at p+8, i[1] p+ 16
+	cannot alter the order fo  the beelxsyes
+	xsxcxxs
+
+	3.44 Practice Problem
+	A struct P1(int caim an ea%aaaaaaaw
+
+a	0 8
+	c 4	4
+	struct
+	if nothing it means no desciriton
+	4 -> 16xs
+
+	b. struct P2
+	offset size of struct alignment req
+	0      	       	      4
+
+double 8
+long 8
+short 2
+float 4
+
+idx = %rdi
+
+    Advice try to paly the larger fields first and then the smallest at the end
+    That is a better way of using the space
+    

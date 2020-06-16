@@ -1,0 +1,8 @@
+	September 30th 2019
+	Alex Hill
+	CS 341
+
+
+	movl %esi, (%rdi,%rax,4) moves from register to memory location(%rdi)
+	moq 24(%rdi,) from memory to array
+	

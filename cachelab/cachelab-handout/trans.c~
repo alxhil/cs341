@@ -1,0 +1,156 @@
+/* netid : alhill@unm.edu  
+ * Date Nov 26th 2019
+ * trans.c - Matrix transpose B = A^T
+ *
+ * Each transpose function must have a prototype of the form:
+ * void trans(int M, int N, int A[N][M], int B[M][N]);
+ *
+ * A transpose function is evaluated by counting the number of misses
+ * on a 1KB direct mapped cache with a block size of 32 bytes.
+ * References https://github.com/chrzhang/computer_systems_architecture_and_programming/blob/master/Cache%20Lab/cachelab-handout/trans.c
+ * https://www.tutorialgateway.org/transpose-of-a-matrix-in-c/ 
+*/ 
+#include <stdio.h>
+#include "cachelab.h"
+
+int is_transpose(int M, int N, int A[N][M], int B[M][N]);
+
+
+
+/* 
+ * You can define additional transpose functions below. We've defined
+ * a simple one below to help you get started. 
+ */ 
+
+/* 
+ * trans - A simple baseline transpose function, not optimized for the cache.
+ */
+char trans_desc[] = "Simple row-wise scan transpose";
+void trans(int M, int N, int A[N][M], int B[M][N])
+{
+  int i, j, tmp;
+
+  for (i = 0; i < N; i++) {
+    for (j = 0; j < M; j++) {
+      tmp = A[i][j];
+      B[j][i] = tmp;
+    }
+  }
+
+}
+
+char transpose_submit_desc[] = "Transpose submission";
+/*
+  * transpose_submit - This is the solution transpose function that you
+  *     will be graded on for Part B of the assignment. Do not change
+  *     the description string "Transpose submission", as the driver
+  *     searches for that string to identify the transpose function to
+  *     be graded.
+  */
+void transpose_submit(int M, int N, int A[N][M], int B[M][N])
+{
+  int temp = 0;
+  int size = 0;
+  int row = 0;
+  int col = 0;
+  int i = 0;
+  int k = 0;
+  int saveDiag = 0;
+  int setStatus = 0;
+
+  if(M == 64 && N == 64){
+    size = 3;
+    for(col = 0; col < 64; col+=size) {
+      for(row = 0; row < 64; row+=size) {
+	for(i = row; i < row + size; i++) {
+	  for( k = col; k < col+size; ++k) {
+	    if (k != i) {
+	      B[k][i] = A[i][k];
+	    } else {
+	      temp = A[i][k];
+	      saveDiag = i;
+	      setStatus = 1;
+	    }
+	  }
+	  if(saveDiag == 1) {
+	    B[setStatus][setStatus] = temp;
+	    saveDiag = 0;
+	  }
+	}
+      }
+    }  
+  }
+
+  if(M == 32 && N == 32) {
+
+    size = 6;
+    for(row = 0; row < 32; row+=size) {
+      for(col = 0; col < 32; col+=size) {
+	for(i = row; i < row+size; i++){
+	  if(i != k){
+	    B[k][i] = A[i][k];
+	  } else {
+	    temp = A[i][k];
+	    saveDiag = 0;
+	    setStatus = 1;
+	  }
+	}
+	if(setStatus == 1) {
+	  B[saveDiag][saveDiag] = temp;
+	  setStatus = 0;
+	}
+      }
+    }
+  }
+
+  if(M == 61 && N == 67) {
+    size = 20;
+    for(row = 0; row < 67; row+=size){
+      for(col = 0; col < M; col+=size) {
+	for(i = row; i < row+size; i++){
+	  for(k = col; k < col+size; k++){
+	    if(i < 66 || k < 60){
+	      B[k][i] = A[i][k];
+	    }
+	  }
+	}
+      }
+    }
+  }
+}  
+  /*
+ * registerFunctions - This function registers your transpose
+ *     functions with the driver.  At runtime, the driver will
+ *     evaluate each of the registered functions and summarize their
+ *     performance. This is a handy way to experiment with different
+ *     transpose strategies.
+ */
+void registerFunctions()
+{
+    /* Register your solution function */
+    registerTransFunction(transpose_submit, transpose_submit_desc); 
+
+    /* Register any additional transpose functions */
+    registerTransFunction(trans, trans_desc); 
+
+}
+
+/* 
+ * is_transpose - This helper function checks if B is the transpose of
+ *     A. You can check the correctness of your transpose by calling
+ *     it before returning from the transpose function.
+ */
+int is_transpose(int M, int N, int A[N][M], int B[M][N])
+{
+    int i, j;
+
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < M; ++j) {
+            if (A[i][j] != B[j][i]) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+

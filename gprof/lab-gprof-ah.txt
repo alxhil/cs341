@@ -1,0 +1,32 @@
+
+Gprof Flat Profile
+ 69.76      1.68     1.68        1     1.68     1.68  sort_words
+ 28.65      2.37     0.69   214364     0.00     0.00  find_ele_rec
+  0.83      2.39     0.02   114421     0.00     0.00  save_string
+
+for (i = 0; i < tsize; i++)
+	for (ele = htable[i]; ele; ele = ele->next) {
+	    if (ele->freq == 1)
+		scnt++;
+	    if (quick)
+		array[cnt] = ele;
+	    else {
+		for (j = cnt; j > 0 && ele->freq > array[j-1]->freq; j--)
+		    array[j] = array[j-1];
+		array[j] = ele;
+	    }
+	    cnt++;
+	}
+
+The function that the default version of the dictionary spends the most time on is the sort_words function. This function has to do a sorting algorithmn so it takes a lot of processing time if the sorting method is inefficient. When it is using quicksort it will go a lot faster.
+
+
+ 87                             204769048             find_ele_rec [4]
+  88                0.65    0.02  214364/214364      insert_string [3]
+   89[4]     92.1    0.65    0.02  214364+204769048 find_ele_rec [4]
+    90                0.01    0.00  114421/114421      new_ele [7]
+     91                0.01    0.00  114421/114421      save_string [9]
+      92                             204769048             find_ele_rec [4]
+
+
+The function calls [4] Calls find_ele_rec 3 separate times each function call. This will inflate the numbers obviously.
